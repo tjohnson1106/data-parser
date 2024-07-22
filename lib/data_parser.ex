@@ -10,12 +10,20 @@ defmodule ElhexDelivery.PostalCode.DataParser do
     end)
     |> Enum.filter(fn row ->
       case row do
-        [postal_code, _, _, _, _, latitude, longitude] -> true
+        [postal_code, _, _, _, _, _latitude, _longitude] -> true
         _ -> false
       end
     end)
     |> Enum.map(fn row ->
-      []
+      [postal_code, _, _, _, _, latitude, longitude] = row
+      [postal_code, latitude, longitude]
+    end)
+    |> Enum.map(fn row ->
+      [postal_code, latitude, longitude] = row
+      latitude = latitude |> String.replace(" ", "") |> String.to_float()
+      longitude = longitude |> String.replace(" ", "") |> String.to_float()
+
+      {postal_code, {latitude, longitude}}
     end)
   end
 end
